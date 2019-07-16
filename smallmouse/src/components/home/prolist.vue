@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <van-tabs @click="onClick">
+  <div id="main_list">
+    <van-tabs @click="onClick" sticky color="#77bc1f" title-active-color="#77bc1f">
       <van-tab :title="titlist[0]">
         <div class="main_one">
           <img :src="imgone" alt />
@@ -26,7 +26,7 @@
         <div class="main_banner"></div>
       </van-tab>
       <van-tab v-for="(item,index) of shaixuan" :key="index" :title="item">
-        <Prochild />
+        <Prochild :tip="msg" />
       </van-tab>
     </van-tabs>
   </div>
@@ -34,6 +34,7 @@
 
 <script>
 import Prochild from '@/components/home/prochild'
+
 import Vue from 'vue'
 import { Tab, Tabs } from 'vant'
 import { log } from 'util';
@@ -49,12 +50,7 @@ export default {
       newuser: '',
       sanlis: [],
       shaixuan: [],
-      index_banner: '',
-      main_floor: '',
-      bao1: [],
-      bigimg: '',
-      samllimg: '',
-      type: ''
+      msg: ''
     }
   },
   mounted () {
@@ -80,24 +76,11 @@ export default {
         this.sanlis.push(sanlist[a]['pic'])
       }
     })
-    fetch('http://10.11.56.226:8000/getkind').then(res => res.json()).then((data) => {
 
-
-      this.index_banner = data[0]['data']['banner'].pic
-      this.main_floor = data[0]['data']['floors'][0]['title'] //名字
-      let bao1 = data[0]['data']['floors'][0]['products'] //单一宝贝循环
-      console.log(data[0]['data']['floors'][0]['products']);
-
-      for (let index = 0; index < bao1.length; index++) {
-        this.bao1.push(bao1[index])
-      }
-      this.samllimg = bao1[1]['tags'][0]['pic']
-    })
   },
   methods: {
     onClick (name, title) {
-      this.type = title
-      console.log(this.type);
+      this.msg = title
     }
   },
   components: {
@@ -107,6 +90,31 @@ export default {
 </script>
 
 <style lang="scss">
+.itemscall {
+  position: relative;
+  .oldfont {
+    padding: 0 8px;
+    padding: 0.01rem 0.08rem 0;
+    font-size: 0.12rem;
+    color: #999;
+    text-decoration: line-through;
+  }
+  #icon {
+    font-size: 24px;
+    position: absolute;
+    color: green;
+    top: -6px;
+    right: 0.1rem;
+    bottom: -0.05rem;
+  }
+  .redfont {
+    color: #ee2e52;
+    padding: 0.01rem 0.08rem 0;
+    font-size: 13px;
+    margin: 0 4px 0 0;
+  }
+}
+
 .main_index {
   width: 100%;
   height: 100%;
@@ -114,13 +122,14 @@ export default {
     width: 100%;
     height: 100%;
     display: flex;
+    background-color: #f8f8f8;
     // flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-between;
     li {
       width: 1.57rem;
       height: 2.17rem;
-      background-color: aquamarine;
+      background-color: #fff;
       margin-top: 0.06rem;
       .itemimg {
         width: 100%;
@@ -163,7 +172,7 @@ export default {
 .index_banner {
   width: 100%;
   height: 1.1rem;
-  background-color: aqua;
+  // background-color: aqua;
   img {
     width: 100%;
     height: 100%;
