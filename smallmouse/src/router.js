@@ -15,6 +15,13 @@ export default new Router({
     //   component: Home
     // },
     {
+      path: '/detail/:id',
+      name: 'detail',
+      components: {
+        default: () => import('./views/detail/index.vue'),
+      }
+    },
+    {
       path: '/register',
       name: 'register',
       components: {
@@ -28,6 +35,9 @@ export default new Router({
       components: {
         default: () => import('./views/home/index.vue'),
         footer: footer
+      },
+      meta: {
+        keepAlive: true
       }
     },
     {

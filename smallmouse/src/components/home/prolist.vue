@@ -1,6 +1,6 @@
 <template>
   <div id="main_list">
-    <van-tabs @click="onClick" sticky color="#77bc1f" title-active-color="#77bc1f">
+    <van-tabs @click="onClick" sticky color="#77bc1f" title-active-color="#77bc1f" swipeable>
       <van-tab :title="titlist[0]">
         <div class="main_one">
           <img :src="imgone" alt />
@@ -34,12 +34,12 @@
 
 <script>
 import Prochild from '@/components/home/prochild'
-
 import Vue from 'vue'
 import { Tab, Tabs } from 'vant'
-import { log } from 'util';
+// import { log } from 'util'
+// import axios from 'axios'
 Vue.use(Tab).use(Tabs)
-import axios from 'axios'
+
 export default {
   data () {
     return {
@@ -56,27 +56,26 @@ export default {
   mounted () {
     fetch('http://10.11.56.226:8000/getindexss').then(res => res.json()).then((data) => {
       let comont = data[0].data['recommendChannel'] // 公共
-      let comont2 = data[0].data['floors'] // 爆款
-      let comont3 = data // 爆款
+      // let comont2 = data[0].data['floors'] // 爆款
+      // let comont3 = data // 爆款
       this.imgone = comont['topAdvs'][0]['pic'] // img one
-      let titlis = data[0].data['channels'] //banner
+      let titlis = data[0].data['channels'] // banner
       for (let a = 0; a < titlis.length; a++) {
         this.titlist.push(titlis[a].name)
       }
       this.shaixuan = this.titlist.filter(function (item, index, array) {
         return (item.indexOf('推荐') !== 0)
       }) // 筛选titlist数组 去除第一个
-      let huolist = comont['middleAdvs'] //活动8张
+      let huolist = comont['middleAdvs'] // 活动8张
       for (let a = 0; a < huolist.length; a++) {
         this.huo.push(huolist[a]['pic'])
       }
       this.newuser = comont['bottomAdvs'][0]['pic'] // 新人
-      let sanlist = comont['recommendAdvs'] //三线
+      let sanlist = comont['recommendAdvs'] // 三线
       for (let a = 0; a < sanlist.length; a++) {
         this.sanlis.push(sanlist[a]['pic'])
       }
     })
-
   },
   methods: {
     onClick (name, title) {

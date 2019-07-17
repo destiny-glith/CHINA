@@ -1,5 +1,5 @@
 <template>
   <div>
-    我是8
+   你好
   </div>
 </template>

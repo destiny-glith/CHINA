@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="main">
-     <Banner />
+      <Banner />
       <Prolist />
     </div>
   </div>
@@ -24,7 +24,26 @@ export default {
     Prolist
   },
   mounted () {
+    // const main = document.querySelector('.main') // 渲染前就开始监听滚动事件
+    // main.addEventListener('scroll', this.scrollFn) // 滚动出发函数
+  },
+  beforeRouteLeave (to, from, next) {
+    const main = document.querySelector('.main')
+    // main.removeEventListener('scroll', this.scrollFn)
+    localStorage.setItem('position', main.scrollTop)
+    next()
+  },
+  watch: {
+    $route (newVal, oldVal) {
+      if (newVal.name === 'home') {
+        const mains = document.querySelector('.main')
+        mains.scrollTop = localStorage.getItem('position')
+      }
 
-  }
+    }
+  },
+  methods: {
+
+  },
 }
 </script>

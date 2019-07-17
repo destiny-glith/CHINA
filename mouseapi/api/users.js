@@ -4,6 +4,8 @@ var Prolist = require('./../sql/prolist') // 连接prolist集合
 var Kind = require('./../sql/kind') // 连接kind集合
 var Admin = require('./../sql/admin') // 连接kind集合
 var Shouye = require('./../sql/shouye') // 连接kind集合
+var Detail = require('./../sql/detail') // 连接kind集合
+var Scall = require('./../sql/scall') // 连接kind集合
 var Sql = require('./../sql/index') //分装的东西
 
 
@@ -13,6 +15,13 @@ router.get('/getlist', function (req, res, next) { // http://localhost:8000/getl
     res.send(data)
   })
 });
+router.get('/rob', function (req, res, next) { // http://localhost:8000/getlist
+  let { id } = req.query;
+  Sql.find(Scall, { id: /100100307/}, { _id: 0 }).then((data) => {
+    res.send(data)
+  })
+});
+
 router.get('/getindexss', function (req, res, next) { // http://localhost:8000/getlist
   Sql.find(Shouye, {}, { _id: 0 }).then((data) => {
     res.send(data)
@@ -22,6 +31,24 @@ router.get('/getkind', function (req, res, next) { // http://localhost:8000/getk
   Sql.find(Kind, {}, { _id: 0 }).then((data) => {
     res.send(data)
   })
+});
+router.get('/detail', function (req, res, next) { // http://localhost:8000//detail
+  let { productId } = req.query;
+  if (productId !== undefined || productId !== '') {
+    Sql.find(Detail, {
+      productId: productId
+    }, {
+        _id: 0
+      }).then((data) => {
+        if (data.length === 0) {
+          res.send('0')
+        } else {
+          res.send(data)
+        }
+      })
+  } else {
+    res.send('0')
+  }
 });
 // router.get('/detail', function (req, res, next) {
 //   Sql.find(Prolist, req.query, { _id: 0 }).then((data) => {

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <van-popup v-model="show" position="bottom" :style="{ height: '100%' }" duration="0.5">
+    <van-popup v-model="show" position="bottom" :style="{ height: '100%' }" :duration="min">
       <van-nav-bar
         title="注册"
         left-text="返回"
@@ -33,20 +33,22 @@
 
 <script>
 import Vue from 'vue'
-import { NavBar, Button, Field, Popup } from 'vant'
+import { NavBar, Button, Field, Popup, Cell, CellGroup } from 'vant'
 import { Icon } from 'vant'
 Vue.use(NavBar) // 头部nav
 Vue.use(Field) // input用户密码库
 Vue.use(Button) // 按钮
 Vue.use(Icon) // 提示icon
 Vue.use(Popup) //弹出
+Vue.use(Cell).use(CellGroup)
 
 export default {
   data () {
     return {
       phone: '',
       show: false,
-      sms: ''
+      sms: '',
+      min: 0.5
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -79,7 +81,7 @@ export default {
       this.$router.back()
     },
     onClickLgin () { // 事件登录
-
+      console.log('121')
     }
   }
 }
