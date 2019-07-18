@@ -205,7 +205,7 @@ export default {
 .main_one {
   width: 100%;
   height: 1rem;
-  background-color: red;
+  // background-color: red;
   img {
     width: 100%;
     height: 100%;
@@ -214,7 +214,7 @@ export default {
 .main_list {
   width: 100%;
   height: 1.4rem;
-  background-color: green;
+  // background-color: green;
   ul {
     width: 100%;
     height: 1.4rem;

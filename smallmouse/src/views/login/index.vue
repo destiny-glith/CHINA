@@ -1,14 +1,7 @@
 <template>
   <div class="container">
     <van-popup v-model="show" position="bottom" :style="{ height: '100%' }" :duration="0.5">
-      <van-nav-bar
-        title="注册"
-        left-text="返回"
-        right-text="登录"
-        left-arrow
-        @click-left="onClickBack"
-        @click-right="onClickLgin"
-      />
+      <van-nav-bar title="登录" left-text="返回" left-arrow @click-left="onClickBack" />
       <div class="main" :verify="btnuseFn()">
         <van-cell-group>
           <van-field
@@ -29,22 +22,15 @@
             :error-message="passwordState"
             required
           />
-          <!-- :error-message="phoneState" phoneState()通过v-model判断计算属性-->
-          <!-- <van-field v-model="sms" center clearable label="验证码" placeholder="请输入短信验证码">
-            <van-button slot="button" size="small" type="primary">发送验证码</van-button>
-          </van-field>-->
-          <van-field v-model="sms" center clearable label="短信验证码" placeholder="请输入验证码">
-            <van-button
-              slot="button"
-              size="small"
-              type="primary"
-              @click="sendCode"
-              :disabled="btnflag"
-              :style="{background: btnColor,borderColor:btnColor}"
-            >发送验证码</van-button>
-          </van-field>
           <!-- <van-button type="primary" size="normal" :block="true">下一步</van-button> -->
-          <van-button type="primary" size="normal" :block="true" @click="register">注册</van-button>
+          <van-button
+            type="primary"
+            size="normal"
+            :block="true"
+            @click="login"
+            :disabled="btnflag"
+            :style="{background: btnColor,borderColor:btnColor}"
+          >登录</van-button>
         </van-cell-group>
       </div>
     </van-popup>
@@ -88,56 +74,35 @@ export default {
     onClickBack () { // 事件返回
       this.$router.back()
     },
-    onClickLgin () { // 事件登录
-      this.$router.replace('/login')
-    },
-    sendCode () {
-      fetch("https://www.daxunxun.com/users/sendCode?tel=" + this.phone)
-        .then(res => res.json())
-        .then(data => {
-          console.log(data) //获取到的值0,获取失败，1已经注册，其他code
-          if (data === 0) {
-            Toast('该手机号注册失败');
-          } else if (data === 1) {
-            Dialog.confirm({
-              title: '提示',
-              message: '改用户已被注册，是否直接登录'
-            }).then(() => {
-              // on confirm
-              this.$router.push('/login')
-            }).catch(() => {
-              // on cancel
-            });
-          } else {
-            Toast('验证码发送成功');
-            this.code = data.code
-          }
-        })
-    },
-    register () {
-      if (this.code !== this.sms) {
-        Toast('验证码不对哦')
-      } else if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5) {
-        fetch("http://10.11.56.226:8000/api/register",{
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: "username=" + this.phone + "&password=" + this.password
+    login () {
+      if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5) {
+        fetch("http://10.11.56.226:8000/login?username="+ this.phone + "&password=" + this.password, {
         }).then(res => res.json()).then(data => {
-          console.log(data);
-          if (data === 0) {
-            Toast('已被注册');
-          } else if (data === 1) {
+          console.log(data)
+         if (data === 1) {
+            // localStorage.setItem('isLogin', 'ok')
+            // this.$store.commit('changeLoginSatate', 'ok') // 1
+            this.$store.commit('changeLoginSatate', {result : 'ok'})// 2
+            // this.$store.commit({ // 3
+            //   type:'changeLoginSatate', 
+            //   result : 'ok'})
+            // this.$store.commit({ // 4
+            //   type: CHANGE_LOGIN_STATE,
+            //   result: 'ok'            })
+            
+            this.$router.back()
+          } else if (data === 0) {
             Dialog.confirm({
               title: '提示',
-              message: '注册成功，是否直接登录'
+              message: '改用户还未注册是否注册'
             }).then(() => {
               // on confirm
-              this.$router.push('/login')
+              this.$router.push('/register')
             }).catch(() => {
               // on cancel
-            });
+            })
+          } else if (data === 2) {
+            Toast('密码错误')
           }
         })
       }

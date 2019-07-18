@@ -26,7 +26,15 @@ export default new Router({
       name: 'register',
       components: {
         default: () => import('./views/register/index.vue'),
-        footer: footer
+        // footer: footer
+      }
+    },
+    {
+      path: '/login',
+      name: 'login',
+      components: {
+        default: () => import('./views/login/index.vue'),
+        // footer: footer
       }
     },
     {

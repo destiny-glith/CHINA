@@ -15,36 +15,12 @@
           <div v-html="message" class="imgcontent"></div>
         </van-tab>
         <van-tab title="规格参数">
-          <!-- <div class="properties">
-            <p class="pro">
-              <span class="pro_one">{{properties[0]["title"]}}:</span>
-              <span class="pro_two">{{properties[0]['value']}}</span>
-            </p>
-            <p class="pro">
-              <span class="pro_one">{{properties[1]['title']}}:</span>
-              <span class="pro_two">{{properties[1]['value']}}</span>
-            </p>
-            <p class="pro">
-              <span class="pro_one">{{properties[2]['title']}}:</span>
-              <span class="pro_two">{{properties[2]['value']}}</span>
-            </p>
-            <p class="pro">
-              <span class="pro_one">{{properties[3]['title']}}:</span>
-              <span class="pro_two">{{properties[3]['value']}}</span>
-            </p>
-            <p class="pro">
-              <span class="pro_one">{{properties[4]['title']}}:</span>
-              <span class="pro_two">{{properties[4]['value']}}</span>
-            </p>
-            <p class="pro">
-              <span class="pro_one">{{properties[5]['title']}}:</span>
-              <span class="pro_two">{{properties[5]['value']}}</span>
-            </p>
-            <p class="pro">
-              <span class="pro_one">{{properties[6]['title']}}:</span>
-              <span class="pro_two">{{properties[6]['value']}}</span>
-            </p>
-          </div> -->
+          <div class="properties">
+            <tr class="pro" v-for="(item,index) of properties" :key="index">
+              <td class="pro_one">{{item.title}}:</td>
+              <td class="pro_two">{{item.value}}</td>
+            </tr>
+          </div>
         </van-tab>
         <van-tab title="品牌参数">
           <div v-html="share" class="detaiimg"></div>
@@ -70,7 +46,7 @@ export default {
       imges: '',
       message: '',
       properties: '',
-      detailId:'',
+      detailId: '',
       share: "<p style=\"text-align: center;\"><img style=\"width:100%\" src=\"http://pic10.cdn.3songshu.com:81//assets/upload/article/03200c1f237a10eec8c58d61c905dd8e.jpg\" title=\"03200c1f237a10eec8c58d61c905dd8e.jpg\"/><img src=\"http://pic10.cdn.3songshu.com:81//assets/upload/article/1f82350d34cb04b04bc95707c664eeda.jpg\" title=\"1f82350d34cb04b04bc95707c664eeda.jpg\" style=\"width: 100%;\"/><img src=\"http://pic10.cdn.3songshu.com:81//assets/upload/article/ccc8e4512b3d6100639e3b9cea0cd691.jpg\" title=\"ccc8e4512b3d6100639e3b9cea0cd691.jpg\" style=\"width: 100%;\"/><img src=\"http://pic10.cdn.3songshu.com:81//assets/upload/article/deb7d81cbb1c566d8e10be3a74a62cf1.jpg\" title=\"deb7d81cbb1c566d8e10be3a74a62cf1.jpg\" style=\"width: 100%;\"/><img src=\"http://pic10.cdn.3songshu.com:81//assets/upload/article/c4f96bdc15f63219d14acf401a46b3f7.jpg\" title=\"c4f96bdc15f63219d14acf401a46b3f7.jpg\" style=\"width: 100%;\"/><img src=\"http://pic10.cdn.3songshu.com:81//assets/upload/article/a3d0f305df5bbe42fb10e7b074844285.jpg\" title=\"a3d0f305df5bbe42fb10e7b074844285.jpg\" style=\"width: 100%;\"/><img src=\"http://pic10.cdn.3songshu.com:81//assets/upload/article/719fa1cc4f719cb3fc449629c65c3ef9.jpg\" title=\"719fa1cc4f719cb3fc449629c65c3ef9.jpg\" style=\"width: 100%;\"/></p>",
 
     }
@@ -97,7 +73,7 @@ export default {
 
       this.properties = data[0]['properties']
       // this.detailId = data[0]['styles'][0]['id']
-      
+
       this.message = test
     })
   }
@@ -109,9 +85,17 @@ export default {
   padding: 0.1rem 0;
   width: 100%;
   height: auto;
-  text-align: center;
   .pro {
+    font-size: 0.13rem;
     margin-bottom: 0.1rem;
+    display: flex;
+    flex-wrap: nowrap;
+    .pro_one {
+      text-align: right;
+    }
+    .pro_two {
+      text-align: left;
+    }
   }
 }
 .detaiimg {
