@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <van-popup v-model="show" position="bottom" :style="{ height: '100%' }" :duration="0.5">
-      <van-nav-bar title="登录" left-text="返回" left-arrow @click-left="onClickBack" />
+      <van-nav-bar title="忘记密码" left-text="返回" left-arrow @click-left="onClickBack" />
       <div class="main" :verify="btnuseFn()">
         <van-cell-group>
           <van-field
@@ -13,28 +13,39 @@
             placeholder="请输入手机号"
             :error-message="phoneState"
           />
+          <van-field v-model="sms" center clearable label="验证码" placeholder="请输入验证码">
+            <van-button
+              slot="button"
+              size="small"
+              type="primary"
+              @click="sendCode"
+              :disabled="btnflag"
+              :style="{background: btnColor,borderColor:btnColor}"
+            >获取验证码</van-button>
+          </van-field>
           <van-field
             v-model="password"
             type="password"
-            label="密码"
+            label="新密码"
             placeholder="请输入密码"
             :right-icon="passwordIcon"
             :error-message="passwordState"
             required
           />
+          <!-- :error-message="phoneState" phoneState()通过v-model判断计算属性-->
+          <!-- <van-field v-model="sms" center clearable label="验证码" placeholder="请输入短信验证码">
+            <van-button slot="button" size="small" type="primary">发送验证码</van-button>
+          </van-field>-->
           <!-- <van-button type="primary" size="normal" :block="true">下一步</van-button> -->
           <van-button
             type="primary"
             size="normal"
             :block="true"
-            @click="login"
-            :disabled="btnflag"
-            :style="{background: btnColor,borderColor:btnColor}"
-          >登录</van-button>
-          <div class="logintog">
-            <router-link to="/register" tag="span">快速注册</router-link>
-            <router-link to="/findpwd" tag="span">忘记密码?</router-link>
-          </div>
+            @click="findpwd"
+            :disabled="pwdBtnflag"
+            :style="{background: pwdColor,borderColor:pwdColor}"
+            :ver="pwdFn()"
+          >确认</van-button>
         </van-cell-group>
       </div>
     </van-popup>
@@ -65,7 +76,9 @@ export default {
       sms: '',
       code: 'a*a*a*',
       btnflag: true,
-      btnColor: '#ccc'
+      pwdBtnflag: true,
+      btnColor: '#ccc',
+      pwdColor: '#ccc'
       // min: 0.5
     }
   },
@@ -76,54 +89,86 @@ export default {
   },
   methods: {
     onClickBack () { // 事件返回
-      this.$router.go(-2)
+      this.$router.back()
     },
-    login () {
-      if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5) {
-        fetch("http://localhost:8000/login", {
+    sendCode () {
+
+      fetch("http://10.11.56.226:8000/verify?username=" + this.phone).then(res => res.json()).then(data => {
+        // console.log(data);
+
+        if (data === 0) {
+          Dialog.confirm({
+            title: '提示',
+            message: '改用户还未注册是否注册'
+          }).then(() => {
+            // on confirm
+            this.$router.push('/register')
+          }).catch(() => {
+            // on cancel
+          })
+        } else if (data === 1) {
+          fetch("https://www.daxunxun.com/users/sendCode?tel=" + this.phone)
+            .then(res => res.json())
+            .then(data => {
+              // console.log(data) //获取到的值0,获取失败，1已经注册，其他code
+              if (data === 0) {
+                Toast('该手机号注册失败')
+              } else if (data === 1) {
+                Toast('验证码为' + this.code)
+              } else {
+                Toast('验证码发送成功')
+                this.code = data.code
+              }
+            })
+        }
+      })
+    },
+    findpwd () {
+      if (this.sms !== this.code) {
+        Toast('验证码不对哦')
+      } else if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5 && this.sms.length > 4) {
+        fetch("http://10.11.56.226:8000/findpwd", {
           method: 'post',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
-          body: "username=" + this.phone + "&password=" + this.password
+          body: "username=" + this.phone + "&newpwd=" + this.password
         }).then(res => res.json()).then(data => {
-          // console.log(data)
-          if (data === 1) {
-            this.$router.replace('/user')
-            // localStorage.setItem('isLogin', 'ok')
-            // this.$store.commit('changeLoginSatate', 'ok') // 1
-            this.$store.commit('changeLoginSatate', { result: 'ok' })// 提交用户账号到状态管理器
-            this.$store.commit('addUserInfo', { result: this.phone })// 登录成功提交用户账号到状态管理器
-            // this.$store.commit({ // 3
-            //   type:'changeLoginSatate', 
-            //   result : 'ok'})
-            // this.$store.commit({ // 4
-            //   type: CHANGE_LOGIN_STATE,
-            //   result: 'ok'            })
-          } else if (data === 0) {
+          // console.log(data);
+          if (data === 0) {
+            Toast('修改失败');
+          } else if (data === 1) {
             Dialog.confirm({
               title: '提示',
-              message: '改用户还未注册是否注册'
+              message: '修改成功，是否立即登录'
             }).then(() => {
               // on confirm
-              this.$router.push('/register')
+              this.$router.push('/login')
             }).catch(() => {
               // on cancel
             })
-          } else if (data === 2) {
-            Toast('密码错误')
           }
         })
       }
     },
     btnuseFn () { // 如果输入的手机号符合正则，发送验证码的框框才会可以点击
-      if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5) {
+      if (/^1[3456789]\d{9}$/.test(this.phone)) {
         this.btnflag = false
         this.btnColor = '#07c160'
         this.data1 = ''
       } else {
         this.btnflag = true
         this.btnColor = '#ccc'
+      }
+    },
+    pwdFn () { // 如果输入的手机号符合正则，发送验证码的框框才会可以点击
+      if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5 && this.sms.length > 4) {
+        this.pwdBtnflag = false
+        this.pwdColor = '#07c160'
+        this.data1 = ''
+      } else {
+        this.pwdBtnflag = true
+        this.pwdColor = '#ccc'
       }
     }
   },
@@ -169,16 +214,4 @@ export default {
 </script>
 
 <style lang="scss">
-.logintog {
-  height: 0.3rem;
-  width: 100%;
-  // background-color: red;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 0.07rem;
-  align-items: center;
-  span {
-    font-size: 0.12rem;
-  }
-}
 </style>

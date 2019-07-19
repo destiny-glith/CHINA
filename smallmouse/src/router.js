@@ -30,6 +30,14 @@ export default new Router({
       }
     },
     {
+      path: '/findpwd',
+      name: 'findpwd',
+      components: {
+        default: () => import('./views/findpwd/index.vue'),
+        // footer: footer
+      }
+    },
+    {
       path: '/login',
       name: 'login',
       components: {

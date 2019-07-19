@@ -67,7 +67,7 @@ export default {
     // const id = this.$route.params.id
     let { $route: { params: { id } } } = this // 结构赋值
     this.detailId = id
-    fetch('http://10.11.56.226:8000/detail?productId=' + id).then(res => res.json()).then(data => {
+    fetch('http://localhost:8000/detail?productId=' + id).then(res => res.json()).then(data => {
       this.imges = data[0]['pics']
       let test = this.zhuanyi(data[0].content)
 

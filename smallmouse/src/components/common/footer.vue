@@ -40,13 +40,14 @@ export default {
   @include border(1px 0 0 0, #b2b2b2, solid);
   ul {
     display: flex;
-    justify-content: space-around;
     align-items: center;
+    @include rect(100%, 0.5rem);
     li {
       display: flex;
       flex: 1;
       flex-direction: column;
       align-items: center;
+      height: 100%;
       span{
         font-size: 0.11rem;
         color: #585858;

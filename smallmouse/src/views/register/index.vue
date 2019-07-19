@@ -4,10 +4,8 @@
       <van-nav-bar
         title="注册"
         left-text="返回"
-        right-text="登录"
         left-arrow
         @click-left="onClickBack"
-        @click-right="onClickLgin"
       />
       <div class="main" :verify="btnuseFn()">
         <van-cell-group>
@@ -88,9 +86,6 @@ export default {
     onClickBack () { // 事件返回
       this.$router.back()
     },
-    onClickLgin () { // 事件登录
-      this.$router.replace('/login')
-    },
     sendCode () {
       fetch("https://www.daxunxun.com/users/sendCode?tel=" + this.phone)
         .then(res => res.json())
@@ -99,15 +94,13 @@ export default {
           if (data === 0) {
             Toast('该手机号注册失败');
           } else if (data === 1) {
-            Dialog.confirm({
-              title: '提示',
-              message: '改用户已被注册，是否直接登录'
-            }).then(() => {
-              // on confirm
-              this.$router.push('/login')
-            }).catch(() => {
-              // on cancel
-            });
+            fetch("http://localhost:8000/verify?username=" + this.phone).then(res => res.json()).then(data => {
+              if (data === 0) {
+                Toast('验证码为' + this.code)
+              }else{
+                Toast('用户已存在')
+              }
+            })
           } else {
             Toast('验证码发送成功');
             this.code = data.code
@@ -118,7 +111,7 @@ export default {
       if (this.code !== this.sms) {
         Toast('验证码不对哦')
       } else if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5) {
-        fetch("http://10.11.56.226:8000/api/register",{
+        fetch("http://localhost:8000/register", {
           method: 'post',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
