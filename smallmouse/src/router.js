@@ -57,6 +57,25 @@ export default new Router({
       }
     },
     {
+      path: '/home',
+      name: 'home',
+      components: {
+        default: () => import('./views/home/index.vue'),
+        footer: footer
+      },
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/home/articleinfo',
+      name: 'articleinfo',
+      components: {
+        default: () => import('./views/articleinfo/index.vue'),
+        footer: footer
+      }
+    },
+    {
       path: '/kind',
       name: 'kind',
       components: {

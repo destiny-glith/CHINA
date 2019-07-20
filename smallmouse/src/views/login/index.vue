@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     onClickBack () { // 事件返回
-      this.$router.go(-2)
+      this.$router.back()
     },
     login () {
       if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5) {
@@ -89,7 +89,7 @@ export default {
         }).then(res => res.json()).then(data => {
           // console.log(data)
           if (data === 1) {
-            this.$router.replace('/user')
+            this.$router.back()
             // localStorage.setItem('isLogin', 'ok')
             // this.$store.commit('changeLoginSatate', 'ok') // 1
             this.$store.commit('changeLoginSatate', { result: 'ok' })// 提交用户账号到状态管理器

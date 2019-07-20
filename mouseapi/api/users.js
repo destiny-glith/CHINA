@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var Sql = require('./../sql/index') //分装的东西
 var Prolist = require('./../sql/prolist') // 连接prolist集合
 var Qiongs = require('./../sql/qiongqiong') // 连接prolist集合
 var Kind = require('./../sql/kind') // 连接kind集合
@@ -8,7 +9,7 @@ var Shouye = require('./../sql/shouye') // 连接kind集合
 var Detail = require('./../sql/detail') // 连接kind集合
 var Scall = require('./../sql/scall') // 连接kind集合
 var Share = require('./../sql/share') // 连接share集合 宝贝五款推荐
-var Sql = require('./../sql/index') //分装的东西
+var Shopcar = require('./../sql/shopcar') // 连接share集合 宝贝五款推荐
 
 
 /* GET users listing. */
@@ -17,6 +18,36 @@ router.get('/getshare', function (req, res, next) { // http://localhost:8000/get
     res.send(data)
   })
 });
+
+
+router.get('/shopcar/add', function (req, res, next) { // http://localhost:8000/shopcar  //宝贝五款推荐
+  let { user, carts } = req.query
+  Sql.find(Shopcar, { user: user }, { _id: 0 }).then((data) => {
+    if (data.length === 0) {
+      Sql.insert(Shopcar, req.query).then(data => {
+        res.send('1') // 新用户添加成功
+      })
+    } else {
+      Sql.update(Shopcar, { user: user }, { $set: { carts: carts } }).then(data => {
+        res.send('1') // 老用户
+      })
+    }
+  })
+});
+
+
+router.get('/shopcar', function (req, res, next) { // http://localhost:8000/shopcar  //宝贝五款推荐
+  let { user } = req.query
+  Sql.find(Shopcar, { user: user }, { _id: 0 }).then((data) => {
+    if (data.length === 0) {
+      res.send('购物车没有数据')
+    } else {
+      res.send(data)
+    }
+  })
+});
+
+
 
 router.get('/getlist', function (req, res, next) { // http://localhost:8000/getlist
   Sql.find(Prolist, {}, { _id: 0 }).then((data) => {
@@ -89,9 +120,9 @@ router.get('/qiongqiong', function (req, res, next) {  // http://localhost:8000/
 
 
 
-router.get('/login', function (req, res, next) { // 登录 http://localhost:8000/login?username=18895396967&password=123456
-  let { username, password } = req.query;
-  // console.log(username);
+router.post('/login', function (req, res, next) { // 登录 http://localhost:8000/login?username=18895396967&password=123456
+  let username = req.body.username;
+  let password = req.body.password;
 
   var flag = false;
   let pwd = ''
@@ -117,7 +148,7 @@ router.get('/login', function (req, res, next) { // 登录 http://localhost:8000
 // router.get('/register', function (req, res, next) { // 注册 http://localhost:8000/register?username=18895396967&password=123456
 //   let { username, passwword } = req.query;
 //   // console.log(username);
-  
+
 //   Sql.find(Admin, { username: username }, { _id: 0 }).then(data => {
 //     // console.log(data);
 //     if (data.length !== 0) {
@@ -130,18 +161,17 @@ router.get('/login', function (req, res, next) { // 登录 http://localhost:8000
 //   })
 // });
 router.post('/register', function (req, res, next) { // 注册 http://localhost:8000/register?username=18895396967&password=123456
-  // let { username, passwword } = req.body;
-  console.log(req.body.username);
-  console.log(req.body.password);
-  
+  let username = req.body.username;
+  let password = req.body.password;
+
   Sql.find(Admin, { username: username }, { _id: 0 }).then(data => {
     // console.log(data);
-    if (data.length !== 0) {
-      res.send('0') // 已经被注册
-    } else {
-      Sql.insert(Admin, req.query).then(data => {
+    if (data.length === 0) {
+      Sql.insert(Admin, req.body).then(data => {
         res.send('1') // 注册成功
       })
+    } else {
+      res.send('0') // 已经被注册
     }
   })
 });
@@ -177,10 +207,24 @@ router.get('/update', function (req, res, next) { // 修改密码 /login?usernam
     }
   })
 });
-router.get('/findpwd', function (req, res, next) { // /findpwd post username=123 newpwd=1232121
-  let { username, newpwd } = req.query;
-  Sql.update(Admin, { username: username }, { $set: { password: newpwd } }).then(data => {
-    res.send('1') // 修改成功
+
+
+router.post('/findpwd', function (req, res, next) { // /findpwd post username=123 newpwd=1232121
+  let username = req.body.username;
+  let password = req.body.newpwd;
+  console.log(username);
+  console.log(password);
+
+  Sql.find(Admin, { username: username }, { _id: 0 }).then(data => {
+    console.log(data.length);
+
+    if (data.length !== 0) {
+      Sql.update(Admin, { username: username }, { $set: { password: password } }).then(data => {
+        res.send('1') // 修改成功
+      })
+    } else {
+      res.send('0') // 修改失败
+    }
   })
 })
 

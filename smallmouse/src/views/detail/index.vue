@@ -7,9 +7,7 @@
           <img v-lazy="image" />
         </van-swipe-item>
       </van-swipe>
-
       <Rob :tip="detailId" />
-
       <van-tabs type="line" animate="true">
         <van-tab title="图文详情">
           <div v-html="message" class="imgcontent"></div>
@@ -27,18 +25,26 @@
         </van-tab>
       </van-tabs>
     </div>
+
+    <van-goods-action>
+      <van-goods-action-icon icon="cart-o" text="购物车" @click="onClickBuycar" />
+      <van-goods-action-button type="warning" text="加入购物车" @click="onClickAddcar" />
+      <van-goods-action-button type="danger" text="立即购买" @click="onClickBuy" />
+    </van-goods-action>
   </div>
 </template>
 
 <script>
 import Rob from '@/components/robtitle/rob' // 引入共享的商品价格标题栏
 import Vue from 'vue'
-import { NavBar, Swipe, SwipeItem, Lazyload, ImagePreview, Tab, Tabs } from 'vant' // 导航栏
+import { NavBar, Swipe, SwipeItem, Lazyload, ImagePreview, Tab, Tabs, GoodsAction, GoodsActionIcon, GoodsActionButton, Toast } from 'vant' // 导航栏
+Vue.use(GoodsAction).use(GoodsActionIcon).use(GoodsActionButton)
 Vue.use(Swipe).use(SwipeItem)
 Vue.use(NavBar)
 Vue.use(Lazyload)
 Vue.use(ImagePreview)
 Vue.use(Tab).use(Tabs)
+Vue.use(Toast)
 
 export default {
   data () {
@@ -55,6 +61,15 @@ export default {
     Rob
   },
   methods: {
+    onClickBuycar () {
+      Toast('点击图标');
+    },
+    onClickAddcar () {
+      Toast('点击按钮');
+    },
+    onClickBuy () {
+      Toast('点击按钮');
+    },
     onClickBack () {
       this.$router.back()
     },

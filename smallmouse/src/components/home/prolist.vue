@@ -2,7 +2,7 @@
   <div id="main_list">
     <van-tabs @click="onClick" sticky color="#77bc1f" title-active-color="#77bc1f" swipeable>
       <van-tab :title="titlist[0]">
-        <div class="main_one">
+        <div class="main_one"  @click="getArticleinfo('articleinfo')">
           <img :src="imgone" alt />
         </div>
         <div class="main_list">
@@ -80,6 +80,9 @@ export default {
   methods: {
     onClick (name, title) {
       this.msg = title
+    },
+    getArticleinfo(id){
+      this.$router.push('/home/'+ id)
     }
   },
   components: {
@@ -105,6 +108,7 @@ export default {
     top: -6px;
     right: 0.1rem;
     bottom: -0.05rem;
+    z-index: 999;
   }
   .redfont {
     color: #ee2e52;

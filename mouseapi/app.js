@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/users', usersRouter);
 
 // 分离
-app.use('/api', apiUsersRouter)
+app.use('/', apiUsersRouter)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

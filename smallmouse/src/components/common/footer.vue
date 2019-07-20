@@ -27,7 +27,11 @@
 
 <script>
 export default {
-
+  computed: {
+    totaNum() {
+      // return this.$store.getters.totalNum
+    }
+  }
 }
 </script>
 

@@ -27,7 +27,11 @@
             <p class="itemscall">
               <span class="redfont">{{itm['salesPrice']}}</span>
               <span class="oldfont">{{itm['marketPrice']}}</span>
-              <span class="iconfont icon-tubiaolunkuo-" id="icon"></span>
+              <span
+                class="iconfont icon-tubiaolunkuo-"
+                id="icon"
+                @click="sendState(itm['pic'],itm['name'],itm['salesPrice'],itm['productId'],$event,flag=true)"
+              ></span>
             </p>
           </li>
         </ul>
@@ -37,20 +41,11 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import { Toast } from 'vant'
+Vue.use(Toast)
+
 export default {
-  props: {
-    tip: {
-      type: String
-    }
-  },
-  methods: {
-    goDetail (val) {
-      this.$router.push({name:'detail' ,params:{id :val} })
-      // this.$router.push('/detail/' + id) //id由函数获得
-      // this.$router.push({ name: 'detail', params: { id: id } }) // 另一种方法
-      // this.$router.push({ path: '/detail/' + id }) // 另一种方法
-    }
-  },
   data () {
     return {
       index_banner: '',
@@ -62,13 +57,127 @@ export default {
       // type: ''
       itemliang: '',
       itemsacll: '',
-      namelists: []
+      namelists: [],
+      // num: 1
+      obj: {},
+      lis: [],
+      // userinfo: this.$store.state.userInfo
+
+    }
+  },
+  props: {
+    tip: {
+      type: String,
+
+    }
+  },
+  methods: {
+    goDetail (val) {
+      this.$router.push({ name: 'detail', params: { id: val } })
+      // this.$router.push('/detail/' + id) //id由函数获得
+      // this.$router.push({ name: 'detail', params: { id: id } }) // 另一种方法
+      // this.$router.push({ path: '/detail/' + id }) // 另一种方法
+    },
+    sendState (pic, name, sale, proid, enent, flag) {
+      // console.log(this.userinfo);
+
+      event.stopPropagation()
+      if (this.$store.state.loginState === "ok") {
+        // this.$store.commit('addBuycart', {
+        //   result: {pic, name, sale, proid,flag}
+        // })
+        let result = { pic, name, sale, proid, flag }
+        if (!localStorage.getItem("cars")) {
+          if (this.obj[this.userinfo] === undefined) {
+            this.obj[this.userinfo] = this.lis
+          }
+        } else {
+          let dic = JSON.parse(localStorage.getItem("cars"))
+          if (dic[this.userinfo] !== undefined) {
+            this.lis = dic[this.userinfo]
+          }
+        }
+        if (!localStorage.getItem("cars")) {
+          this.lis.push(result);
+          let newArr = []
+          let newsArr = []
+          for (let i = 0; i < this.lis.length; i++) {
+            newsArr.push(this.lis[i].proid)
+            let flag = true
+            for (let a = 0; a < newArr.length; a++) {
+              if (this.lis[i].proid == newArr[a].proid) {
+                flag = false
+              }
+            }
+            if (flag) {
+              newArr.push(this.lis[i])
+            }
+          }
+          let a = newsArr.reduce(function (prev, next) {
+            prev[next] = (prev[next] + 1) || 1;
+            return prev;
+          }, {})
+          for (let p = 0; p < newArr.length; p++) {
+            for (let i in a) {
+              if (newArr[p].proid == Number(i)) {
+                newArr[p].num = a[i] // 先循环去重, 2看key出现几次，3，一一通过循环对应（循环去重后的数组，里面）
+              }
+            }
+          }
+          this.lis = newArr
+          this.obj[this.userinfo] = this.lis;
+          let dobj = JSON.stringify(this.obj)
+          localStorage.setItem("cars", dobj)
+        } else {
+          let dic = JSON.parse(localStorage.getItem("cars"))
+          this.lis.push(result);
+          let newArr = []
+          let newsArr = []
+          for (let i = 0; i < this.lis.length; i++) {
+            newsArr.push(this.lis[i].proid)
+            let flag = true
+            for (let a = 0; a < newArr.length; a++) {
+              if (this.lis[i].proid == newArr[a].proid) {
+                flag = false
+              }
+            }
+            if (flag) {
+              newArr.push(this.lis[i])
+            }
+          }
+          let a = newsArr.reduce(function (prev, next) {
+            prev[next] = (prev[next] + 1) || 1;
+            return prev;
+          }, {})
+          // for (let p = 0; p < newArr.length; p++) {
+          //   for (let i in a) {
+          //     if (newArr[p].proid == Number(i)) {
+          //       newArr[p].num = a[i] // 先循环去重, 2看key出现几次，3，一一通过循环对应（循环去重后的数组，里面）
+          //     }
+          //   }
+          // }
+          console.log(newsArr);
+          
+          console.log(a);
+          
+          // this.lis = newArr
+          // dic[this.userinfo] = this.lis;
+          // let dobj = JSON.stringify(dic);
+          // localStorage.setItem("cars", dobj)
+          // console.log(this.lis.length);
+
+        }
+        Toast('成功加入购物车')
+      } else {
+        this.$router.push('/login')
+      }
     }
   },
   mounted () {
     fetch('http://10.11.56.226:8000/getkind').then(res => res.json()).then((data) => {
-      // console.log(this.tip)
+      // console.log(data[0])
       this.samllimg = data[0]['data']['floors'][0]['products'][0]['tags'][0]['pic']
+      // console.log(this.samllimg);
       if (this.tip === '肉脯/海鲜') {
         this.index_banner = data[0]['data']['banner']['pic'] // 第一张图
         this.main_floor = data[0]['data']['floors'][0]['title'] // 标题

@@ -23,7 +23,11 @@
                 <p class="itemscall">
                   <span class="redfont">{{item['matchPrice']}}</span>
                   <span class="oldfont">{{item['marketPrice']}}</span>
-                  <span class="iconfont icon-tubiaolunkuo-" id="icon"></span>
+                  <span
+                    class="iconfont icon-tubiaolunkuo-"
+                    id="icon"
+                    @click="sendState(item['thumbUrl'],item['productName'],item['matchPrice'],item['productId'],$event,flag=true)"
+                  ></span>
                 </p>
               </li>
             </ul>
@@ -36,9 +40,10 @@
 
 <script>
 import Vue from 'vue'
-import { List, PullRefresh } from 'vant'
+import { List, PullRefresh, Toast } from 'vant'
 Vue.use(PullRefresh)
 Vue.use(List)
+Vue.use(Toast)
 
 // import { log } from 'util'
 import Banner from '@/components/home/banner'
@@ -59,15 +64,106 @@ export default {
       finished: false,
       pageNum: 0,
       isLoading: false,
-      suctxt:'稍等一会会'
+      suctxt: '稍等一会会',
+      obj: {},
+      lis: [],
+      userinfo: this.$store.state.userInfo,
+      liss:''
     }
   },
   methods: {
+    sendState (pic, name, sale, proid, enent, flag) {
+      event.stopPropagation()
+      if (this.$store.state.loginState === "ok") {
+        // this.$store.commit('addBuycart', {
+        //   result: {pic, name, sale, proid,flag}
+        // })
+        let result = { pic, name, sale, proid, flag }
+        if (!localStorage.getItem("cars")) {
+          if (this.obj[this.userinfo] === undefined) {
+            this.obj[this.userinfo] = this.lis
+          }
+        } else {
+          let dic = JSON.parse(localStorage.getItem("cars"))
+          if (dic[this.userinfo] !== undefined) {
+            this.lis = dic[this.userinfo]
+          }
+        }
+        if (!localStorage.getItem("cars")) {
+          this.lis.push(result);
+          let newArr = []
+          let newsArr = []
+          for (let i = 0; i < this.lis.length; i++) {
+            newsArr.push(this.lis[i].proid)
+            let flag = true
+            for (let a = 0; a < newArr.length; a++) {
+              if (this.lis[i].proid == newArr[a].proid) {
+                flag = false
+              }
+            }
+            if (flag) {
+              newArr.push(this.lis[i])
+            }
+          }
+          let a = newsArr.reduce(function (prev, next) {
+            prev[next] = (prev[next] + 1) || 1;
+            return prev;
+          }, {})
+          for (let p = 0; p < newArr.length; p++) {
+            for (let i in a) {
+              if (newArr[p].proid == Number(i)) {
+                newArr[p].num = a[i] // 先循环去重, 2看key出现几次，3，一一通过循环对应（循环去重后的数组，里面）
+              }
+            }
+          }
+          this.liss = newArr
+          this.obj[this.userinfo] = this.liss;
+          let dobj = JSON.stringify(this.obj)
+          localStorage.setItem("cars", dobj)
+        } else {
+          let dic = JSON.parse(localStorage.getItem("cars"))
+          this.lis.push(result);
+          let newArr = []
+          let newsArr = []
+          for (let i = 0; i < this.lis.length; i++) {
+            newsArr.push(this.lis[i].proid)
+            let flag = true
+            for (let a = 0; a < newArr.length; a++) {
+              if (this.lis[i].proid == newArr[a].proid) {
+                flag = false
+              }
+            }
+            if (flag) {
+              newArr.push(this.lis[i])
+            }
+          }
+          let a = newsArr.reduce(function (prev, next) {
+            prev[next] = (prev[next] + 1) || 1;
+            return prev;
+          }, {})
+          for (let p = 0; p < newArr.length; p++) {
+            for (let i in a) {
+              if (newArr[p].proid == Number(i)) {
+                newArr[p].num = a[i] // 先循环去重, 2看key出现几次，3，一一通过循环对应（循环去重后的数组，里面）
+              }
+            }
+          }
+          this.lis = newArr
+          dic[this.userinfo] = this.lis;
+          let dobj = JSON.stringify(dic);
+          localStorage.setItem("cars", dobj)
+          console.log(this.lis.length);
+
+        }
+        Toast('成功加入购物车')
+      } else {
+        this.$router.push('/login')
+      }
+    },
     onLoad () {
       this.loading = true // 第一步移动到底部loading出现
       this.pageNum++
-
-      fetch('http://localhost:8000/cplist?count=2&pageNum=' + this.pageNum).then(res => res.json()).then(data => {
+      fetch('http://localhost:8000/cplist?count=5&pageNum=' + this.pageNum).then(res => res.json()).then(data => {
         this.loading = false
         if (data.length === 0) { // 3如果请求结果没有，则finished为true
           console.log('没有数据了');
@@ -79,10 +175,10 @@ export default {
     },
     onRefresh () {
       this.isLoading = true;
-      fetch('http://localhost:8000/cplist?count=2&pageNum=0').then(res => res.json()).then(data => {
+      this.pageNum = 0;
+      fetch('http://localhost:8000/cplist?count=5&pageNum=1').then(res => res.json()).then(data => {
         this.isLoading = false;
-        this.pageNum = 0;
-        this.list = data;
+        this.lists = data;
         this.finished = false;
       })
     }
