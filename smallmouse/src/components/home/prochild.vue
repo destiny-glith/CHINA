@@ -61,7 +61,7 @@ export default {
       // num: 1
       obj: {},
       lis: [],
-      // userinfo: this.$store.state.userInfo
+      userinfo: this.$store.state.userInfo
 
     }
   },
@@ -79,8 +79,6 @@ export default {
       // this.$router.push({ path: '/detail/' + id }) // 另一种方法
     },
     sendState (pic, name, sale, proid, enent, flag) {
-      // console.log(this.userinfo);
-
       event.stopPropagation()
       if (this.$store.state.loginState === "ok") {
         // this.$store.commit('addBuycart', {
@@ -98,73 +96,17 @@ export default {
           }
         }
         if (!localStorage.getItem("cars")) {
-          this.lis.push(result);
-          let newArr = []
-          let newsArr = []
-          for (let i = 0; i < this.lis.length; i++) {
-            newsArr.push(this.lis[i].proid)
-            let flag = true
-            for (let a = 0; a < newArr.length; a++) {
-              if (this.lis[i].proid == newArr[a].proid) {
-                flag = false
-              }
-            }
-            if (flag) {
-              newArr.push(this.lis[i])
-            }
-          }
-          let a = newsArr.reduce(function (prev, next) {
-            prev[next] = (prev[next] + 1) || 1;
-            return prev;
-          }, {})
-          for (let p = 0; p < newArr.length; p++) {
-            for (let i in a) {
-              if (newArr[p].proid == Number(i)) {
-                newArr[p].num = a[i] // 先循环去重, 2看key出现几次，3，一一通过循环对应（循环去重后的数组，里面）
-              }
-            }
-          }
-          this.lis = newArr
+          this.lis.push(result)
           this.obj[this.userinfo] = this.lis;
           let dobj = JSON.stringify(this.obj)
           localStorage.setItem("cars", dobj)
         } else {
           let dic = JSON.parse(localStorage.getItem("cars"))
-          this.lis.push(result);
-          let newArr = []
-          let newsArr = []
-          for (let i = 0; i < this.lis.length; i++) {
-            newsArr.push(this.lis[i].proid)
-            let flag = true
-            for (let a = 0; a < newArr.length; a++) {
-              if (this.lis[i].proid == newArr[a].proid) {
-                flag = false
-              }
-            }
-            if (flag) {
-              newArr.push(this.lis[i])
-            }
-          }
-          let a = newsArr.reduce(function (prev, next) {
-            prev[next] = (prev[next] + 1) || 1;
-            return prev;
-          }, {})
-          // for (let p = 0; p < newArr.length; p++) {
-          //   for (let i in a) {
-          //     if (newArr[p].proid == Number(i)) {
-          //       newArr[p].num = a[i] // 先循环去重, 2看key出现几次，3，一一通过循环对应（循环去重后的数组，里面）
-          //     }
-          //   }
-          // }
-          console.log(newsArr);
-          
-          console.log(a);
-          
-          // this.lis = newArr
-          // dic[this.userinfo] = this.lis;
-          // let dobj = JSON.stringify(dic);
-          // localStorage.setItem("cars", dobj)
-          // console.log(this.lis.length);
+          this.lis.push(result)
+          dic[this.userinfo] = this.lis
+          let dobj = JSON.stringify(dic)
+          localStorage.setItem("cars", dobj)
+          console.log(this.lis.length);
 
         }
         Toast('成功加入购物车')

@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     onClickBack () { // 事件返回
-      this.$router.back()
+      this.$router.go(-2)
     },
     login () {
       if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5) {
