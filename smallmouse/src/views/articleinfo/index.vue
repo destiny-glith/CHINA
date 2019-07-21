@@ -29,7 +29,7 @@ export default {
     },
     onRefresh () {
       this.isLoading = true;
-      fetch('http://localhost:8000/getshare').then(res => res.json()).then(data => {
+      fetch('http://106.14.213.84:8000/getshare').then(res => res.json()).then(data => {
         this.isLoading = false;
         this.share = data[1]['content']
         this.title = data[1]['info']
@@ -37,7 +37,7 @@ export default {
     }
   },
   mounted () {
-    fetch("http://localhost:8000/getshare").then(res => res.json()).then(data => {
+    fetch("http://106.14.213.84:8000/getshare").then(res => res.json()).then(data => {
       this.share = data[1]['content']
       this.title = data[1]['info']
 

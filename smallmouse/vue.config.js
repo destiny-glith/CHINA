@@ -1,15 +1,15 @@
 module.exports = {
   publicPath: './',
-  // devServer: {
-  //   // proxy: 'https://dsapi.beibei.com'
-  //   proxy: {
-  //     '/api': {
-  //       target: 'https://dsapi.beibei.com',
-  //       changeOrigin: true,
-  //       pathRewrite: {
-  //         '^/api': ''
-  //       }
-  //     }
-  //   }
-  // }
+  devServer: {
+    // proxy: 'https://dsapi.beibei.com'
+    proxy: {
+      '/': {
+        target: 'https://106.14.213.84:8000',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+    }
+  }
 }

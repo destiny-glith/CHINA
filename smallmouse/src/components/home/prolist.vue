@@ -54,7 +54,7 @@ export default {
     }
   },
   mounted () {
-    fetch('http://10.11.56.226:8000/getindexss').then(res => res.json()).then((data) => {
+    fetch('http://106.14.213.84:8000/getindexss').then(res => res.json()).then((data) => {
       let comont = data[0].data['recommendChannel'] // 公共
       // let comont2 = data[0].data['floors'] // 爆款
       // let comont3 = data // 爆款

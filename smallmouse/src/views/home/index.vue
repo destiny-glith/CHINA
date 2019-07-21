@@ -39,16 +39,14 @@
 </template>
 
 <script>
+import Banner from '@/components/home/banner'
+import Prolist from '@/components/home/prolist'
 import Vue from 'vue'
 import { List, PullRefresh, Toast } from 'vant'
 Vue.use(PullRefresh)
 Vue.use(List)
 Vue.use(Toast)
-
-// import { log } from 'util'
-import Banner from '@/components/home/banner'
-import Prolist from '@/components/home/prolist'
-import Lists from '@/components/common/lists'
+// import Lists from '@/components/common/lists'
 // import List from '@/components/home/pro/list'
 // Vue.user(log)
 
@@ -73,29 +71,29 @@ export default {
   methods: {
     sendState (pic, name, sale, proid, enent, flag) {
       event.stopPropagation()
-      if (this.$store.state.loginState === "ok") {
+      if (this.$store.state.loginState === 'ok') {
         let result = { pic, name, sale, proid, flag }
-        if (!localStorage.getItem("cars")) {
+        if (!localStorage.getItem('cars')) {
           if (this.obj[this.userinfo] === undefined) {
             this.obj[this.userinfo] = this.lis
           }
         } else {
-          let dic = JSON.parse(localStorage.getItem("cars"))
+          let dic = JSON.parse(localStorage.getItem('cars'))
           if (dic[this.userinfo] !== undefined) {
             this.lis = dic[this.userinfo]
           }
         }
-        if (!localStorage.getItem("cars")) {
+        if (!localStorage.getItem('cars')) {
           this.lis.push(result)
           this.obj[this.userinfo] = this.lis
           let dobj = JSON.stringify(this.obj)
-          localStorage.setItem("cars", dobj)
+          localStorage.setItem('cars', dobj)
         } else {
-          let dic = JSON.parse(localStorage.getItem("cars"))
-          this.lis.push(result);
+          let dic = JSON.parse(localStorage.getItem('cars'))
+          this.lis.push(result)
           dic[this.userinfo] = this.lis
           let dobj = JSON.stringify(dic)
-          localStorage.setItem("cars", dobj)
+          localStorage.setItem('cars', dobj)
         }
       } else {
         this.$router.push('/login')
@@ -104,10 +102,10 @@ export default {
     onLoad () {
       this.loading = true // 第一步移动到底部loading出现
       this.pageNum++
-      fetch('http://localhost:8000/cplist?count=5&pageNum=' + this.pageNum).then(res => res.json()).then(data => {
+      fetch('http://106.14.213.84:8000/cplist?count=5&pageNum=' + this.pageNum).then(res => res.json()).then(data => {
         this.loading = false
         if (data.length === 0) { // 3如果请求结果没有，则finished为true
-          console.log('没有数据了');
+          console.log('没有数据了')
           this.finished = true
         } else { // 否则把获得的数组添加到现有的数组内
           this.lists = [...this.lists, ...data]
@@ -115,12 +113,12 @@ export default {
       })
     },
     onRefresh () {
-      this.isLoading = true;
-      this.pageNum = 0;
-      fetch('http://localhost:8000/cplist?count=5&pageNum=1').then(res => res.json()).then(data => {
-        this.isLoading = false;
-        this.lists = data;
-        this.finished = false;
+      this.isLoading = true
+      this.pageNum = 0
+      fetch('http://106.14.213.84:8000/cplist?count=5&pageNum=1').then(res => res.json()).then(data => {
+        this.isLoading = false
+        this.lists = data
+        this.finished = false
       })
     }
   },
@@ -226,4 +224,3 @@ export default {
   }
 }
 </style>
-

@@ -80,7 +80,7 @@ export default {
     },
     login () {
       if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5) {
-        fetch("http://localhost:8000/login", {
+        fetch("http://106.14.213.84:8000/login", {
           method: 'post',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'

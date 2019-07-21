@@ -116,7 +116,7 @@ export default {
     }
   },
   mounted () {
-    fetch('http://10.11.56.226:8000/getkind').then(res => res.json()).then((data) => {
+    fetch('http://106.14.213.84:8000/getkind').then(res => res.json()).then((data) => {
       // console.log(data[0])
       this.samllimg = data[0]['data']['floors'][0]['products'][0]['tags'][0]['pic']
       // console.log(this.samllimg);

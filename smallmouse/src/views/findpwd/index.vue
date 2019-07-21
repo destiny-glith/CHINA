@@ -93,7 +93,7 @@ export default {
     },
     sendCode () {
 
-      fetch("http://10.11.56.226:8000/verify?username=" + this.phone).then(res => res.json()).then(data => {
+      fetch("http://106.14.213.84:8000/verify?username=" + this.phone).then(res => res.json()).then(data => {
         // console.log(data);
 
         if (data === 0) {
@@ -127,7 +127,7 @@ export default {
       if (this.sms !== this.code) {
         Toast('验证码不对哦')
       } else if (/^1[3456789]\d{9}$/.test(this.phone) && this.password.length > 5 && this.sms.length > 4) {
-        fetch("http://10.11.56.226:8000/findpwd", {
+        fetch("http://106.14.213.84:8000/findpwd", {
           method: 'post',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'

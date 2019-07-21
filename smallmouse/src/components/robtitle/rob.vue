@@ -50,12 +50,12 @@ export default {
   },
   props: ['tip'],
   mounted () {
-    fetch('http://10.11.56.226:8000/rob').then(res => res.json()).then(data => {
+    fetch('http://106.14.213.84:8000/rob').then(res => res.json()).then(data => {
       // console.log(data);
       // console.log(this.tip);
 
     })
-    fetch('http://10.11.56.226:8000/getshare').then(res => res.json()).then(data => {
+    fetch('http://106.14.213.84:8000/getshare').then(res => res.json()).then(data => {
       let arr1 = []
       let arr2 = []
       let arr3 = []
