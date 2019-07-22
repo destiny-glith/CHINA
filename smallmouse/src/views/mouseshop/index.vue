@@ -13,20 +13,20 @@
         <h3>我的松鼠币</h3>
         <span>0</span>
         <p>松鼠好礼等你来拿~</p>
-        <div>登录/注册</div>
+        <div @click="nlod">登录</div>
       </div>
       <!-- 第二图片 -->
       <!-- 第二图片 -->
       <div class="listimg">
         <div>
-          <!-- <img src="../../img/img01.png" alt=""> -->
+          <img src="../../banner/img1.png" alt="">
           <div>
             <p>购物袋</p>
             <span>想要的都在这</span>
           </div>
         </div>
         <div>
-          <!-- <img src="../../img/img01.png" alt=""> -->
+          <img src="../../banner/img2.png" alt="">
           <div>
             <p>我的兑换</p>
             <span>查看松鼠币兑换订单</span>
@@ -36,59 +36,17 @@
       <!-- 一个小导航 -->
       <!-- 一个小导航 -->
       <div class="nav">
-        <p>兑换中心</p>
+        <p >兑换中心</p>
         <span>0</span>
       </div>
       <!-- 内容 -->
       <!-- 内容 -->
       <div class="man">
-        <div>
-            <!-- <img src="../../img/man01.png" alt=""> -->
-            <p>会员福利满148减15</p>
-            <span>每人限兑1000件</span>
-            <span>100</span>
-        </div>
-        <div>
-            <!-- <img src="../../img/man01.png" alt=""> -->
-            <p>会员福利满148减15</p>
-            <span>每人限兑1000件</span>
-            <span>100</span>
-        </div>
-        <div>
-            <!-- <img src="../../img/man01.png" alt=""> -->
-            <p>会员福利满148减15</p>
-            <span>每人限兑1000件</span>
-            <span>100</span>
-        </div>
-        <div>
-            <!-- <img src="../../img/man01.png" alt=""> -->
-            <p>会员福利满148减15</p>
-            <span>每人限兑1000件</span>
-            <span>100</span>
-        </div>
-        <div>
-            <!-- <img src="../../img/man01.png" alt=""> -->
-            <p>会员福利满148减15</p>
-            <span>每人限兑1000件</span>
-            <span>100</span>
-        </div>
-        <div>
-            <!-- <img src="../../img/man01.png" alt=""> -->
-            <p>会员福利满148减15</p>
-            <span>每人限兑1000件</span>
-            <span>100</span>
-        </div>
-        <div>
-            <!-- <img src="../../img/man01.png" alt=""> -->
-            <p>会员福利满148减15</p>
-            <span>每人限兑1000件</span>
-            <span>100</span>
-        </div>
-        <div>
-            <!-- <img src="../../img/man01.png" alt=""> -->
-            <p>会员福利满148减15</p>
-            <span>每人限兑1000件</span>
-            <span>100</span>
+        <div v-for="(item, index) of shopdata" :key = "index">
+            <img :src="item.pic" alt="">
+            <p>{{item.name}}</p>
+            <span>每人限兑{{item.limit}}件</span>
+            <span>{{item.integralAmout}}</span>
         </div>
       </div>
     </div>
@@ -96,12 +54,52 @@
 </template>
 
 <script>
-export default {
+import Vue from 'vue'
+import { Dialog } from 'vant';
 
+Vue.use(Dialog);
+export default {
+  data() {
+    return {
+      imglist: [],
+      shopdata: []
+    }
+  },
+  mounted() {
+     fetch("http://106.14.213.84:8000/qiongqiong?count=1&pageNum=11").then(res => res.json())
+      .then(data => {
+        console.log(data[0].data)
+        this.shopdata = data[0].data.floors[0].products
+      })
+  },
+  // localStorage.setItem('isLogin', 'ok')
+  methods: {
+    nlod () {
+      Dialog.confirm({
+        title: '哈喽,你好',
+        message: '点击确认后,前往登录页面....',
+        }).then(() => {
+          this.$router.push('/login')
+        }).catch(() => {
+          // on cancel
+        })
+    }
+  },
+  beforeRouteEnter: (to, from, next) => {
+    next(vm => {
+      const loginState = vm.$store.state.loginState // state: { // 需要管理的组件状态loginState: ''},
+      if (loginState === 'ok') {
+        // vm.$router.replace('/user/login')
+        next()
+      } else {
+        vm.$router.push('/login')
+      }
+    })
+  }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/lib/reset.scss";
 .header {
   background-color: #FFFFFF;
@@ -160,16 +158,17 @@ export default {
     }
   }
   .listimg {
-    @include rect(100%, 0.38rem);
+    @include rect(100%, 0.48rem);
     @include flexbox();
     border-bottom: 1px solid #CCCCCC;
     >div {
-      @include rect(50%, 0.38rem);
+      @include rect(50%, 0.48rem);
       border-right: 1px solid #CCCCCC;
       @include flexbox();
       img {
         @include rect(0.3rem, 0.38rem);
         margin-left: 0.1rem;
+        margin-top: 0.05rem;
       }
       div {
         @include flexbox();
@@ -177,7 +176,7 @@ export default {
         margin-left: 0.1rem;
         p {
           font-size: 10px;
-
+          margin-top: 0.05rem;
         }
         span {
           font-size: 8px;
@@ -213,6 +212,7 @@ export default {
       margin: 0.02rem 0;
       img {
         margin: 0.20rem 0.36rem 0.15rem 0.35rem;
+        @include rect(49.3%, auto);
       }
       p {
         @include flexbox();
@@ -220,21 +220,22 @@ export default {
         font-size: 10px;
       }
       span:nth-child(3) {
-        font-size: 12px;
+        font-size: 13px;
+        line-height: 0.4rem;
         display: block;
         margin-left: 0.2rem;
 
       }
       span:nth-child(4) {
-        font-size: 10px;
+        font-size: 14px;
+        line-height: 0.3rem;
         display: block;
-         margin-left: 0.2rem;
+        margin-left: 0.2rem;
       }
     }
     >div:nth-child(odd) {
       margin-right: 4px;
     }
   }
-
 }
 </style>

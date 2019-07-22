@@ -6,7 +6,7 @@ import footer from '@/components/common/footer.vue'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes: [
     // {
@@ -15,11 +15,41 @@ export default new Router({
     //   component: Home
     // },
     {
+      path: '/detail/:id',
+      name: 'detail',
+      components: {
+        default: () => import('./views/detail/index.vue')
+      }
+    },
+    {
+      path: '/det/:id',
+      name: 'det',
+      components: {
+        default: () => import('./views/det/det.vue')
+      }
+    },
+    {
       path: '/register',
       name: 'register',
       components: {
-        default: () => import('./views/register/index.vue'),
-        footer: footer
+        default: () => import('./views/register/index.vue')
+        // footer: footer
+      }
+    },
+    {
+      path: '/findpwd',
+      name: 'findpwd',
+      components: {
+        default: () => import('./views/findpwd/index.vue')
+        // footer: footer
+      }
+    },
+    {
+      path: '/login',
+      name: 'login',
+      components: {
+        default: () => import('./views/login/index.vue')
+        // footer: footer
       }
     },
     {
@@ -27,6 +57,28 @@ export default new Router({
       name: 'home',
       components: {
         default: () => import('./views/home/index.vue'),
+        footer: footer
+      },
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/home',
+      name: 'home',
+      components: {
+        default: () => import('./views/home/index.vue'),
+        footer: footer
+      },
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/home/articleinfo',
+      name: 'articleinfo',
+      components: {
+        default: () => import('./views/articleinfo/index.vue'),
         footer: footer
       }
     },

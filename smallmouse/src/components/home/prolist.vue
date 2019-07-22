@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <van-tabs @click="onClick">
+  <div id="main_list">
+    <van-tabs @click="onClick" sticky color="#77bc1f" title-active-color="#77bc1f" swipeable>
       <van-tab :title="titlist[0]">
-        <div class="main_one">
+        <div class="main_one"  @click="getArticleinfo('articleinfo')">
           <img :src="imgone" alt />
         </div>
         <div class="main_list">
@@ -26,48 +26,20 @@
         <div class="main_banner"></div>
       </van-tab>
       <van-tab v-for="(item,index) of shaixuan" :key="index" :title="item">
-        <!-- <component :is="type"></component> -->
+        <Prochild :tip="msg" />
       </van-tab>
     </van-tabs>
   </div>
 </template>
 
 <script>
-
-// <!-- 第一张图片 -->
-// <div class="index_banner">
-//   <img :src="index_banner" alt />
-// </div>
-// <!-- 标题 -->
-// <div class="main_floor">
-//   <div class="hezi"></div>
-//   <p>{{main_floor}}</p>
-// </div>
-// <div class="main_index">
-//   <ul>
-//     <li v-for="(item,index) of bao1" :key="index">
-//       <div class="itemimg">
-//         <div class="bigimg">
-//           <img :src="item['pic']" alt />
-//         </div>
-//         <div class="smallimg">
-//           <img :src="samllimg" alt />
-//         </div>
-//       </div>
-//       <p class="itemtit">{{item['alias']}}</p>
-//       <p class="itemliang">{{item['name']}}</p>
-//       <p class="itemscall">
-//         <span></span>
-//         <span></span>
-//       </p>
-//     </li>
-//   </ul>
-// </div>
+import Prochild from '@/components/home/prochild'
 import Vue from 'vue'
 import { Tab, Tabs } from 'vant'
-import { log } from 'util';
+// import { log } from 'util'
+// import axios from 'axios'
 Vue.use(Tab).use(Tabs)
-import axios from 'axios'
+
 export default {
   data () {
     return {
@@ -78,61 +50,74 @@ export default {
       newuser: '',
       sanlis: [],
       shaixuan: [],
-      index_banner: '',
-      main_floor: '',
-      bao1: [],
-      bigimg: '',
-      samllimg: '',
-      type: ''
+      msg: ''
     }
   },
   mounted () {
-    fetch('http://10.11.56.226:8000/getindexss').then(res => res.json()).then((data) => {
+    fetch('http://106.14.213.84:8000/getindexss').then(res => res.json()).then((data) => {
       let comont = data[0].data['recommendChannel'] // 公共
-      let comont2 = data[0].data['floors'] // 爆款
-      let comont3 = data // 爆款
+      // let comont2 = data[0].data['floors'] // 爆款
+      // let comont3 = data // 爆款
       this.imgone = comont['topAdvs'][0]['pic'] // img one
-      let titlis = data[0].data['channels'] //banner
+      let titlis = data[0].data['channels'] // banner
       for (let a = 0; a < titlis.length; a++) {
         this.titlist.push(titlis[a].name)
       }
       this.shaixuan = this.titlist.filter(function (item, index, array) {
         return (item.indexOf('推荐') !== 0)
       }) // 筛选titlist数组 去除第一个
-      let huolist = comont['middleAdvs'] //活动8张
+      let huolist = comont['middleAdvs'] // 活动8张
       for (let a = 0; a < huolist.length; a++) {
         this.huo.push(huolist[a]['pic'])
       }
       this.newuser = comont['bottomAdvs'][0]['pic'] // 新人
-      let sanlist = comont['recommendAdvs'] //三线
+      let sanlist = comont['recommendAdvs'] // 三线
       for (let a = 0; a < sanlist.length; a++) {
         this.sanlis.push(sanlist[a]['pic'])
       }
     })
-    fetch('http://10.11.56.226:8000/getkind').then(res => res.json()).then((data) => {
-
-
-      this.index_banner = data[0]['data']['banner'].pic
-      this.main_floor = data[0]['data']['floors'][0]['title'] //名字
-      let bao1 = data[0]['data']['floors'][0]['products'] //单一宝贝循环
-      console.log(data[0]['data']['floors'][0]['products']);
-
-      for (let index = 0; index < bao1.length; index++) {
-        this.bao1.push(bao1[index])
-      }
-      this.samllimg = bao1[1]['tags'][0]['pic']
-    })
   },
   methods: {
     onClick (name, title) {
-      this.type = title
-      console.log(this.type);
+      this.msg = title
+    },
+    getArticleinfo(id){
+      this.$router.push('/home/'+ id)
     }
   },
+  components: {
+    Prochild
+  }
 }
 </script>
 
 <style lang="scss">
+.itemscall {
+  position: relative;
+  .oldfont {
+    padding: 0 8px;
+    padding: 0.01rem 0.08rem 0;
+    font-size: 0.12rem;
+    color: #999;
+    text-decoration: line-through;
+  }
+  #icon {
+    font-size: 24px;
+    position: absolute;
+    color: green;
+    top: -6px;
+    right: 0.1rem;
+    bottom: -0.05rem;
+    z-index: 999;
+  }
+  .redfont {
+    color: #ee2e52;
+    padding: 0.01rem 0.08rem 0;
+    font-size: 13px;
+    margin: 0 4px 0 0;
+  }
+}
+
 .main_index {
   width: 100%;
   height: 100%;
@@ -140,13 +125,14 @@ export default {
     width: 100%;
     height: 100%;
     display: flex;
+    background-color: #f8f8f8;
     // flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-between;
     li {
       width: 1.57rem;
       height: 2.17rem;
-      background-color: aquamarine;
+      background-color: #fff;
       margin-top: 0.06rem;
       .itemimg {
         width: 100%;
@@ -189,7 +175,7 @@ export default {
 .index_banner {
   width: 100%;
   height: 1.1rem;
-  background-color: aqua;
+  // background-color: aqua;
   img {
     width: 100%;
     height: 100%;
@@ -223,7 +209,7 @@ export default {
 .main_one {
   width: 100%;
   height: 1rem;
-  background-color: red;
+  // background-color: red;
   img {
     width: 100%;
     height: 100%;
@@ -232,7 +218,7 @@ export default {
 .main_list {
   width: 100%;
   height: 1.4rem;
-  background-color: green;
+  // background-color: green;
   ul {
     width: 100%;
     height: 1.4rem;

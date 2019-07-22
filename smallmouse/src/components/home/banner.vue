@@ -19,7 +19,7 @@ export default {
     }
   },
   mounted() {
-     fetch('http://10.11.56.226:8000/getindexss').then(res => res.json()).then((data) => {
+     fetch('http://106.14.213.84:8000/getindexss').then(res => res.json()).then((data) => {
      let imglis = data[0].data['carousel']
       for(let a=0; a < imglis.length; a++){
         this.bannerlist.push(imglis[a].pic)
