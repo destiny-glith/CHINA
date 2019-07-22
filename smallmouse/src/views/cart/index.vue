@@ -1,11 +1,16 @@
 <template>
   <div class="container">
     <van-nav-bar title="购物车" left-text="返回" left-arrow @click-left="onClickBack" />
-    <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o">满39元免运费</van-notice-bar>
-    <div class="main">
-      <van-swipe-cell :on-close="onClose" v-for="(item, index) of list" :key="index">
+    <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" v-text="manmian"></van-notice-bar>
+    <div class="main" v-if="list.length > 0">
+      <van-swipe-cell v-for="(item, index) of list" :key="index">
         <div class="item-content">
-          <input type="checkbox" class="checkbox1" v-model="item['flag']" />
+          <input
+            type="checkbox"
+            class="checkbox1"
+            v-model="item['flag']"
+            @click="checkeddOne(item)"
+          />
           <div class="bigimg">
             <img :src="item['pic']" alt />
           </div>
@@ -18,18 +23,24 @@
           </div>
         </div>
         <template slot="right">
-          <button class="danger" @click="deletebaby(item)">删除</button>
+          <button class="danger" @click="deletebaby()">删除</button>
         </template>
       </van-swipe-cell>
     </div>
+    <div class="main" v-else>快去购物吧</div>
     <div class="zongjia">
-      <input type="checkbox" class="checkbox1" />
+      <input type="checkbox" class="checkbox1" v-model="quan" @click="checkedAll()" />
+      <div class="boxx">总数量：{{totaNum}}</div>
       <div class="jiage">
         <span class="jiagespan">
           <span>应付：</span>
           <span class="jiagespan1">{{totaprice}}</span>
         </span>
-        <button class="close_pay">结算</button>
+        <button class="close_pay" @click="getshow()">结算</button>
+        <van-dialog v-model="show" title="请支付" show-cancel-button clas="roroprice">
+          <!-- <img src="https://img.yzcdn.cn/vant/apple-3.jpg" /> -->
+          {{totaprice + "元"}}
+        </van-dialog>
       </div>
     </div>
   </div>
@@ -37,12 +48,14 @@
 
 <script>
 import Vue from 'vue'
-import { mapState, mapActions } from 'vuex'
-import { NavBar, NoticeBar, SwipeCell, Button, Cell, CellGroup } from 'vant'
+// import {  } from 'vant';
+import { mapState, mapActions, mapGetters } from 'vuex'
+import { NavBar, NoticeBar, SwipeCell, Button, Cell, CellGroup, Dialog } from 'vant'
 Vue.use(NoticeBar)
 Vue.use(NavBar)
 Vue.use(SwipeCell)
 Vue.use(Button)
+Vue.use(Dialog)
 Vue.use(Cell).use(CellGroup)
 
 export default {
@@ -50,50 +63,71 @@ export default {
     return {
       list: '',
       listlength: '',
-      aab: ''
+      aab: '',
+      show: false,
+      quan: false
     }
   },
-  mounted () {
-    this.getlocalStorageData()
-    this.aab = JSON.parse(localStorage.getItem('cars'))
-    for (let i in this.aab) {
+  created () {
+    let arr = JSON.parse(localStorage.getItem('cars'))
+    for (let i in arr) {
       if (this.$store.state.userInfo === i) {
-        this.aab[i].map(item => {
-          if (item['idd'] !== 1 || item['idd'] === undefined || item['idd'] === '') {
-            this.list = this.buyBaby
-          } else {
-            // console.log(item);
-            this.list = this.aab[i]
-          }
+        this.list = arr[i]
+        this.$store.commit('addBuycart', {
+          result: this.list
         })
       }
     }
   },
+  mounted () {
+  },
   computed: {
+
+    manmian () {
+      if (this.totaprice > 188) {
+        return "你已满足包邮"
+      } else {
+        return "距离满足包邮还差" + (188 - Number(this.totaprice)).toFixed(2) + "元"
+      }
+    },
     ...mapState({
       buyBaby: state => state.buyBaby
     }),
     totaprice () {
       return this.$store.getters.totaprice
+    },
+    totaNum () {
+      return this.$store.getters.totaNum
     }
   },
   methods: {
-    jia (val) {
-      for (let i in this.aab) {
-        if (this.$store.state.userInfo === i) {
-          this.aab[i].map(item => {
-            if (item['idd'] !== 1 || item['idd'] === undefined || item['idd'] === '') {
-              this.list = this.buyBaby
-            } else {
-              // console.log(item);
-              this.list = this.aab[i]
-            }
-          })
-        }
+    checkedAll () {
+      if (!this.quan) {
+        this.list.map(item => {
+          item.flag = true
+          let obj = {}
+          obj[this.$store.state.userInfo] = this.list
+          localStorage.setItem('cars', JSON.stringify(obj))
+        })
+      } else {
+        this.list.map(item => {
+          item.flag = false
+          let obj = {}
+          obj[this.$store.state.userInfo] = this.list
+          localStorage.setItem('cars', JSON.stringify(obj))
+        })
       }
-
-
-
+    },
+    checkeddOne (item) {
+      item.flag = !item.flag
+      let obj = {}
+      obj[this.$store.state.userInfo] = this.list
+      localStorage.setItem('cars', JSON.stringify(obj))
+    },
+    getshow () {
+      this.show = true
+    },
+    jia (val) {
       let obj = {}
       this.list.map(item => {
         if (item.name === val.name) {
@@ -104,18 +138,6 @@ export default {
       })
     },
     jian (val) {
-      for (let i in this.aab) {
-        if (this.$store.state.userInfo === i) {
-          this.aab[i].map(item => {
-            if (item['idd'] !== 1 || item['idd'] === undefined || item['idd'] === '') {
-              this.list = this.buyBaby
-            } else {
-              // console.log(item);
-              this.list = this.aab[i]
-            }
-          })
-        }
-      }
       let obj = {}
       this.list.map(item => {
         if (item.name === val.name) {
@@ -132,26 +154,18 @@ export default {
       })
     },
     deletebaby (val) {
-      let arr = this.buyBaby
+      let arr = this.list
       arr.splice(val, 1)
       let obj = {}
       obj[this.$store.state.userInfo] = arr
       localStorage.setItem('cars', JSON.stringify(obj))
-
     },
     onClickBack () {
       this.$router.back()
     },
-    // clickPosition 表示关闭时点击的位置
-    onClose (clickPosition, instance) {
-      console.log('删除在这里写')
-    },
     onSubmit () {
       console.log('21')
-    },
-    ...mapActions({
-      getlocalStorageData: 'getlocalStorageData' // 前者代表 在当前组件生成getKindListData自定义的函数，后者代表状态管理器中的actinos
-    })
+    }
   },
   beforeRouteEnter: (to, from, next) => {
     next(vm => {
@@ -167,6 +181,12 @@ export default {
 </script>
 
 <style lang="scss">
+.boxx {
+  position: absolute;
+  bottom: 0.03rem;
+  right: 1.21rem;
+  font-size: 0.12rem;
+}
 .zongjia {
   height: 0.5rem;
   widows: 100%;

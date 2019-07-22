@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.dd973faee7b7895a8ec9c9aedc5802ab.js"
+  "precache-manifest.b57ac7f9c156b434d6e259b51b3c76a6.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "smallmouse"});

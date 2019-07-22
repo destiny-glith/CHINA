@@ -14,7 +14,7 @@
         <span>松鼠币商城</span>
       </router-link>
       <router-link to="/cart" tag="li">
-        <i class="iconfont icon-tubiaolunkuo-">{{totaNum}}</i>
+        <i class="iconfont icon-tubiaolunkuo-"></i>
         <span>购物车</span>
       </router-link>
       <router-link to="/user" tag="li">
